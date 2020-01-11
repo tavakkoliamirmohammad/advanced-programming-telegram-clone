@@ -1,5 +1,6 @@
 package UserViewPages;
 
+import GroupChannelViewPages.ChannelMainView;
 import GroupChannelViewPages.GroupMainView;
 import MessageViewPages.MessageMainView;
 import MessagingSystem.Messagable;
@@ -99,6 +100,8 @@ public class UserMainPage {
             System.out.println("Invalid option. try again");
         } else {
             Channel channel = channels.get(choice);
+            ChannelMainView channelMainView = new ChannelMainView(channel, user);
+            channelMainView.run();
         }
     }
 
