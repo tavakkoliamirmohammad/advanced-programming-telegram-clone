@@ -1,7 +1,9 @@
 package GroupChannelViewPages;
 
+import MessageViewPages.MessageMainView;
 import MessagingSystem.Messagable;
 import MessagingSystem.Message;
+import MessagingSystem.MessageType;
 import UserManagement.*;
 
 import java.util.List;
@@ -36,14 +38,11 @@ public class GroupMainView {
             scanner.nextLine();
             if (choice == 4) {
                 return;
-            }
-            else if(choice == 1){
+            } else if (choice == 1) {
                 showGroupInfo();
-            }
-            else if(choice == 2){
+            } else if (choice == 2) {
                 showGroupMessages();
-            }
-            else if(choice == 3){
+            } else if (choice == 3) {
                 leaveGroup();
                 return;
             }
@@ -68,6 +67,10 @@ public class GroupMainView {
             return;
         }
         List<Message> messages = Message.getMessagbleMessages(groupRelation);
+        if(messages.isEmpty()){
+            System.out.println("Empty!");
+            return;
+        }
         for (Message message : messages) {
             List<Messagable> messagables = message.getSenders();
             System.out.println("----- SENDERS ------ ");
@@ -78,9 +81,38 @@ public class GroupMainView {
             System.out.println(message.getMessageData().show());
             System.out.println(message.getCalendar());
         }
+        System.out.println("Enter the number reply or forward: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        choice -= 1;
+        if (choice < 0 || choice >= messages.size()) {
+            System.out.println("Invalid option. try again");
+        } else {
+            Message message = messages.get(choice);
+            MessageMainView messageMainView = new MessageMainView(user);
+            System.out.println("What do you want to do? ");
+            System.out.println("1. reply");
+            System.out.println("2. forward");
+            int type = scanner.nextInt();
+            scanner.nextLine();
+            if (type > 2 || type < 1) {
+                System.out.println("invalid option");
+                return;
+            }
+            MessageType messageType = null;
+            if (type == 1) {
+                messageType = MessageType.Reply;
+            } else if (type == 2) {
+                messageType = MessageType.Forward;
+            }
+            Message message1 = messageMainView.run(messageType);
+            if (message1 != null) {
+                message1.setRelatedMessage(message);
+            }
+        }
     }
 
-    private void leaveGroup(){
+    private void leaveGroup() {
         try {
             group.leaveGroup(user);
         } catch (UserFollowedException e) {

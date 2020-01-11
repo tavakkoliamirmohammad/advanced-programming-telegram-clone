@@ -68,7 +68,7 @@ public class MessageMainView {
                     System.out.println("User is not in the group");
                 }
                 MessageRole messageRole = message.getMessagbleRole(groupRelation);
-                if (messageRole == null) {
+                if (messageRole != null) {
                     System.out.println("User is already in receiver list");
                 } else {
                     MessagePersonRelation messagePersonRelation = new MessagePersonRelation();
@@ -91,7 +91,7 @@ public class MessageMainView {
                     return;
                 }
                 MessageRole messageRole = message.getMessagbleRole(channelRelation);
-                if (messageRole == null) {
+                if (messageRole != null) {
                     System.out.println("User is already in receiver list");
                 } else if (channelRelation.getRole() != GroupRole.Admin) {
                     System.out.println("User is not the admin of the channel");
@@ -151,13 +151,13 @@ public class MessageMainView {
         }
     }
 
-    private boolean send(MessageType messageType) {
+    private Message send(MessageType messageType) {
         if (message.getMessageData() == null) {
             System.out.println("The message should have message data");
-            return false;
+            return null;
         } else if (message.getMessagePersonRelations().isEmpty()) {
-            System.out.println("You should set receivers for tge message");
-            return false;
+            System.out.println("You should set receivers for the message");
+            return null;
         }
         MessagePersonRelation messagePersonRelation = new MessagePersonRelation();
         messagePersonRelation.setMessagable(user);
@@ -166,10 +166,10 @@ public class MessageMainView {
         message.setMessageType(messageType);
         message.setCalendar(Calendar.getInstance());
         message.sendMessage();
-        return true;
+        return message;
     }
 
-    public void run(MessageType messageType) {
+    public Message run(MessageType messageType) {
         while (true) {
             showMessage();
             showMenu();
@@ -177,15 +177,16 @@ public class MessageMainView {
             int choice = scanner.nextInt();
             scanner.nextLine();
             if (choice == 4) {
-                return;
+                return null;
             }
             if (choice == 1) {
                 addReceiver();
             } else if (choice == 2) {
                 addMessageData();
             } else if (choice == 3) {
-                if (send(messageType)) {
-                    return;
+                Message message = send(messageType);
+                if (message != null) {
+                    return message;
                 }
             }
         }

@@ -68,8 +68,9 @@ public class UserMainPage {
             return;
         }
         for (int i = 0; i < groups.size(); ++i) {
-            System.out.println((i + 1) + groups.get(i).getName());
+            System.out.println((i + 1) + ". " +  groups.get(i).getName());
         }
+        System.out.println("Choice one: ");
         int choice = scanner.nextInt();
         scanner.nextLine();
         choice -= 1;

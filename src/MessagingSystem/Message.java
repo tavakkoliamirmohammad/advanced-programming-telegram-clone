@@ -11,7 +11,15 @@ public class Message {
     private MessageType messageType;
     private List<MessagePersonRelation> messagePersonRelations = new ArrayList<>();
     private MessageData messageData; // every message data can be assign to n message.
+    private Message relatedMessage; // every related message has n message
 
+    public Message getRelatedMessage() {
+        return relatedMessage;
+    }
+
+    public void setRelatedMessage(Message relatedMessage) {
+        this.relatedMessage = relatedMessage;
+    }
 
     public Calendar getCalendar() {
         return calendar;
