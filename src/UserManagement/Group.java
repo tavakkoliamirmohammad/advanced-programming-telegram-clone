@@ -5,7 +5,7 @@ import MessagingSystem.Messagable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Group implements Messagable {
+public class Group {
     private static List<Group> groups = new ArrayList<>();
     private String name;
     private String id;
@@ -78,6 +78,14 @@ public class Group implements Messagable {
     }
 
 
+    public List<User> getUserIn(){
+        List<User> users = new ArrayList<>();
+        List<UserGroupRelation> groupRelations = this.userGroupRelationList;
+        for(UserGroupRelation userGroupRelation : groupRelations){
+            users.add(userGroupRelation.getUser());
+        }
+        return users;
+    }
     public String getName() {
         return name;
     }
@@ -98,8 +106,4 @@ public class Group implements Messagable {
         return userGroupRelationList;
     }
 
-    @Override
-    public String getString() {
-        return name;
-    }
 }

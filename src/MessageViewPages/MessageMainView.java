@@ -46,7 +46,7 @@ public class MessageMainView {
             try {
                 User u = User.findById(id);
                 MessageRole messageRole = message.getMessagbleRole(u);
-                if (messageRole == null) {
+                if (messageRole != null) {
                     System.out.println("User is already in receiver list");
                 } else {
                     MessagePersonRelation messagePersonRelation = new MessagePersonRelation();
@@ -63,13 +63,17 @@ public class MessageMainView {
             String id = scanner.nextLine();
             try {
                 Group group = Group.findGroupById(id);
-                MessageRole messageRole = message.getMessagbleRole(group);
+                UserGroupRelation groupRelation = user.getUserGroupRelation(group);
+                if (groupRelation == null) {
+                    System.out.println("User is not in the group");
+                }
+                MessageRole messageRole = message.getMessagbleRole(groupRelation);
                 if (messageRole == null) {
                     System.out.println("User is already in receiver list");
                 } else {
                     MessagePersonRelation messagePersonRelation = new MessagePersonRelation();
                     messagePersonRelation.setRole(MessageRole.Receiver);
-                    messagePersonRelation.setMessagable(group);
+                    messagePersonRelation.setMessagable(groupRelation);
                     message.getMessagePersonRelations().add(messagePersonRelation);
                 }
 
@@ -81,13 +85,20 @@ public class MessageMainView {
             String id = scanner.nextLine();
             try {
                 Channel channel = Channel.findChannelById(id);
-                MessageRole messageRole = message.getMessagbleRole(channel);
+                UserChannelRelation channelRelation = user.getUserChannelRelation(channel);
+                if (channelRelation == null) {
+                    System.out.println("User is not in the Channel");
+                    return;
+                }
+                MessageRole messageRole = message.getMessagbleRole(channelRelation);
                 if (messageRole == null) {
                     System.out.println("User is already in receiver list");
+                } else if (channelRelation.getRole() != GroupRole.Admin) {
+                    System.out.println("User is not the admin of the channel");
                 } else {
                     MessagePersonRelation messagePersonRelation = new MessagePersonRelation();
                     messagePersonRelation.setRole(MessageRole.Receiver);
-                    messagePersonRelation.setMessagable(channel);
+                    messagePersonRelation.setMessagable(channelRelation);
                     message.getMessagePersonRelations().add(messagePersonRelation);
                 }
 
@@ -173,8 +184,9 @@ public class MessageMainView {
             } else if (choice == 2) {
                 addMessageData();
             } else if (choice == 3) {
-                send(messageType);
-                return;
+                if (send(messageType)) {
+                    return;
+                }
             }
         }
     }

@@ -21,4 +21,9 @@ public class UserGroupRelation implements Messagable {
     public void setRole(GroupRole role) {
         this.role = role;
     }
+
+    @Override
+    public String getString() {
+        return user.getName();
+    }
 }

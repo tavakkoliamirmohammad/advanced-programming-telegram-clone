@@ -62,8 +62,7 @@ public class UserEntrancePage {
         String id = scanner.nextLine();
         System.out.println("Enter the profile Image url");
         String profileImageUrl = scanner.nextLine();
-        ProfileImage profileImage = new ProfileImage();
-        profileImage.setImageUrl(profileImageUrl);
+        ProfileImage profileImage = new ProfileImage(profileImageUrl);
         profileImage.setSubmitDate(Calendar.getInstance());
         try {
             User.signUp(username, password,name, id, profileImage);

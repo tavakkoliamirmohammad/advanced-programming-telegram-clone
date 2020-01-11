@@ -5,7 +5,7 @@ import MessagingSystem.Messagable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Channel implements Messagable {
+public class Channel {
     private static List<Channel> channels = new ArrayList<>();
     private String name;
     private String id;
@@ -117,6 +117,15 @@ public class Channel implements Messagable {
         return channel;
     }
 
+    public List<User> getUserIn(){
+        List<User> users = new ArrayList<>();
+        List<UserChannelRelation> channelRelations = this.userChannelRelations;
+        for(UserChannelRelation userChannelRelation : channelRelations){
+            users.add(userChannelRelation.getUser());
+        }
+        return users;
+    }
+
     public static Channel findChannelById(String id) throws GroupChannelNotFoundException {
         for (Channel channel : channels) {
             if (channel.id.equals(id)) {
@@ -126,8 +135,4 @@ public class Channel implements Messagable {
         throw new GroupChannelNotFoundException("Channel with the give id not found");
     }
 
-    @Override
-    public String getString() {
-        return name;
-    }
 }

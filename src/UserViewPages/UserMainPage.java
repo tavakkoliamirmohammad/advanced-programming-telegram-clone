@@ -1,12 +1,11 @@
 package UserViewPages;
 
+import GroupChannelViewPages.GroupMainView;
 import MessageViewPages.MessageMainView;
 import MessagingSystem.Messagable;
 import MessagingSystem.Message;
 import MessagingSystem.MessageType;
-import UserManagement.Channel;
-import UserManagement.Group;
-import UserManagement.User;
+import UserManagement.*;
 
 import java.util.List;
 import java.util.Scanner;
@@ -25,7 +24,9 @@ public class UserMainPage {
         System.out.println("3. show messages");
         System.out.println("4. send message");
         System.out.println("5. show profile");
-        System.out.println("6. exit");
+        System.out.println("6. create group");
+        System.out.println("7. create channel");
+        System.out.println("8. logout");
     }
 
     public void run() {
@@ -36,7 +37,7 @@ public class UserMainPage {
             System.out.println("Enter a choice");
             int choice = scanner.nextInt();
             scanner.nextLine();
-            if (choice == 6) {
+            if (choice == 8) {
                 return;
             }
             if (choice == 1) {
@@ -48,15 +49,24 @@ public class UserMainPage {
             } else if (choice == 4) {
                 MessageMainView messageMainView = new MessageMainView(user);
                 messageMainView.run(MessageType.Ordinary);
-            }
-            else if(choice == 5){
+            } else if (choice == 5) {
                 showProfile();
+            }
+            else if(choice == 6){
+                createGroup();
+            }
+            else if (choice == 7){
+                createChannel();
             }
         }
     }
 
     private void showGroups() {
         List<Group> groups = Group.showAllUserGroups(user);
+        if (groups.isEmpty()) {
+            System.out.println("Empty");
+            return;
+        }
         for (int i = 0; i < groups.size(); ++i) {
             System.out.println((i + 1) + groups.get(i).getName());
         }
@@ -67,13 +77,19 @@ public class UserMainPage {
             System.out.println("Invalid option. try again");
         } else {
             Group group = groups.get(choice);
+            GroupMainView groupMainView = new GroupMainView(group, user);
+            groupMainView.run();
         }
     }
 
     private void showChannels() {
         List<Channel> channels = Channel.showAllUserChannel(user);
+        if (channels.isEmpty()) {
+            System.out.println("Empty");
+            return;
+        }
         for (int i = 0; i < channels.size(); ++i) {
-            System.out.println((i + 1) + channels.get(i).getName());
+            System.out.println((i + 1) + ". " +  channels.get(i).getName());
         }
         int choice = scanner.nextInt();
         scanner.nextLine();
@@ -87,6 +103,10 @@ public class UserMainPage {
 
     private void getUserMessages() {
         List<Message> messages = Message.getMessagbleMessages(user);
+        if(messages.isEmpty()){
+            System.out.println("Empty!");
+            return;
+        }
         for (Message message : messages) {
             System.out.println(message.getMessageData().show());
             System.out.println(message.getCalendar());
@@ -105,6 +125,67 @@ public class UserMainPage {
         System.out.println("name: " + user.getName());
         System.out.println("username: " + user.getUsername());
         System.out.println("id: " + user.getId());
-        System.out.println("profile image: " + user.getProfileImage());
+        System.out.println("profile image: " + user.getProfileImage().show());
+    }
+
+    private void createGroup(){
+        System.out.println("Enter name");
+        String name = scanner.nextLine();
+        System.out.println("Enter id");
+        String id = scanner.nextLine();
+        System.out.println("Enter profile picture url");
+        String profile = scanner.nextLine();
+        ProfileImage profileImage = new ProfileImage(profile);
+        System.out.println("choice group type: ");
+        System.out.println("1. private");
+        System.out.println("2. public");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        GroupType groupType = null;
+        if(choice == 1){
+            groupType = GroupType.Private;
+        }
+        else if(choice == 2){
+            groupType = GroupType.Public;
+        }
+        else {
+            System.out.println("Invalid option try again");
+            return;
+        }
+        try {
+            Group group = Group.createGroup(user, name, id, profileImage, groupType);
+        } catch (GroupChannelExistsException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    private void createChannel(){
+        System.out.println("Enter name");
+        String name = scanner.nextLine();
+        System.out.println("Enter id");
+        String id = scanner.nextLine();
+        System.out.println("Enter profile picture url");
+        String profile = scanner.nextLine();
+        ProfileImage profileImage = new ProfileImage(profile);
+        System.out.println("choice Channel type: ");
+        System.out.println("1. private");
+        System.out.println("2. public");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        GroupType groupType = null;
+        if(choice == 1){
+            groupType = GroupType.Private;
+        }
+        else if(choice == 2){
+            groupType = GroupType.Public;
+        }
+        else {
+            System.out.println("Invalid option try again");
+            return;
+        }
+        try {
+            Channel channel = Channel.createChannel(user, name, id, profileImage, groupType);
+        } catch (GroupChannelExistsException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

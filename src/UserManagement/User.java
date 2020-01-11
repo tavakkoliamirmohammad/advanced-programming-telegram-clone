@@ -6,7 +6,7 @@ import MessagingSystem.Messagable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User  implements Messagable {
+public class User implements Messagable {
 
     private static List<User> users = new ArrayList<>();
 
@@ -39,7 +39,9 @@ public class User  implements Messagable {
                 throw new InvalidUserAuthenticationException("Username or id is already taken");
             }
         }
-        return new User(username, password, name, id, profileImage);
+        User us = new User(username, password, name, id, profileImage);
+        users.add(us);
+        return us;
     }
 
     public static User findById(String id) throws InvalidUserAuthenticationException {
@@ -48,8 +50,29 @@ public class User  implements Messagable {
                 return user;
             }
         }
-        throw  new InvalidUserAuthenticationException("user not found");
+        throw new InvalidUserAuthenticationException("user not found");
     }
+
+    public UserGroupRelation getUserGroupRelation(Group group) {
+        UserGroupRelation groupRelation = null;
+        for (UserGroupRelation userGroupRelation : group.getUserGroupRelationList()) {
+            if (userGroupRelation.getUser() == this) {
+                groupRelation = userGroupRelation;
+            }
+        }
+        return groupRelation;
+    }
+
+    public UserChannelRelation getUserChannelRelation(Channel channel) {
+        UserChannelRelation channelRelation = null;
+        for (UserChannelRelation userChannelRelation : channel.getUserChannelRelations()) {
+            if (userChannelRelation.getUser() == this) {
+                channelRelation = userChannelRelation;
+            }
+        }
+        return channelRelation;
+    }
+
     @Override
     public String getString() {
         return username;
